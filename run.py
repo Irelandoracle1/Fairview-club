@@ -57,15 +57,24 @@ class RankingSystem:
     """
     This class is to manage  player rankings.
     """
-    def _init_(self,player):
+    def _init_(self , player_sheet_name):
         """
         this will initialize the rankingSystem with the name of the 
         player sheet
         """
         self.players = {}
-        self.player=player
+        self.player_sheet_name = player_sheet_name
         self.gc = self.authorize_google_sheets()
 
+
+        def authorize_google_sheets(self):
+            """
+            authorizes access to google sheet
+            """
+            scope = []
+            
+
+           
     def get_player_sheet(self):
         """
         this will get google sheet for player details
@@ -210,23 +219,44 @@ class ContributionSystem:
             print("invalid credentials. Access denied.")
             return
 
-        players = "Fairview Football All Stars"
-        contributions = "Fairview Football All Stars_Contributions"
-        ranking_system = RankingSystem(players)
-        ContributionSystem(contributions)              
+        player_sheet_name = "Fairview Football All Stars - Players"
+        contribution_sheet_name = "Fairview Football All Stars - Contributions"
+        ranking_system = RankingSystem(player_sheet_name)
+        Contribution_System(contribution_sheet_name)              
 
-    try:
-        player_names = read_players_from_file("players.txt")
-    except FileNotFoundError:
-        print("File not found. Please enter player name Manually")
-        num_players = int(input("Enter the number of players: "))
-        player_names = [input(f"Enter name for player{i + 1}:") for i in 
-        range(num_players)]
+        try:
+            player_names = read_players_from_file("players.txt")
+        except FileNotFoundError:
+            print("File not found. Please enter player name Manually")
+            num_players = int(input("Enter the number of players: "))
+            player_names = [input(f"Enter name for player{i + 1}:") for i in range(num_players)]
 
-    for name in player_names:
-        ranking_system.add_player(name)
+        for name in player_names:
+            ranking_system.add_player(name)
+            num_matches = int(input("Enter Number Of Matches Played: "))
+            for i in range(num_matches):
+                players_involved = input(f"Enter Players names involved in match{i + 1} (comma-seperated:) ").split(',') 
+                result = input("Enter Match result(win/draw): ")  
 
-    num_matches = int(input("Enter Number Of Matches Played: "))
-    for i in range(num_matches):
-        players_involved = input(f"Enter Players names involved in match{i + 1} (comma-seperated:) ").split(',') 
-        result = input"("Enter Match result(win/draw): ")  
+                ranking_system.record_match_result(players_involved, result)
+
+num_offences = int(input("Enter Number of offenses: "))
+for i in range(num_offences):
+    player_name = input(f"Enter the name of the player commiting offence {i + 1}:")
+
+    ranking_system.record_offence(player_name)
+
+num_contributions = int(input("Enter the amount of contribution: "))
+for i in range(num_contributions):
+    player_name = input(f"Enter the name of the player making contribution {i + 1}")
+    amount = float(input("Enter the amount of Contribution: "))
+
+contribution_system.record_contribution(player_name, amount) 
+contribution_system.admin_enter_expenses()  
+contribution_system.update_balance()
+ranking_system.update_player_sheet()
+ranking_system.display_rankings()
+
+if _name_ =="_main_":
+    main()
+
