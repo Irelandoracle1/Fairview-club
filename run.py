@@ -185,9 +185,9 @@ class ContributionSystem:
         """
         read players from file
         """
-        with open(filename.txt, r) as file:
+        with open(filename,'r') as file:
             players = file.readlines()
-        return    [player.strip() for player in players]
+            return [player.strip() for player in players]
 
 
     def admin_login():
@@ -201,3 +201,32 @@ class ContributionSystem:
             return True
         else:
             return False    
+
+    def main():
+        """
+        this is the main function to run the application
+        """
+        if not admin_login():
+            print("invalid credentials. Access denied.")
+            return
+
+        players = "Fairview Football All Stars"
+        contributions = "Fairview Football All Stars_Contributions"
+        ranking_system = RankingSystem(players)
+        ContributionSystem(contributions)              
+
+    try:
+        player_names = read_players_from_file("players.txt")
+    except FileNotFoundError:
+        print("File not found. Please enter player name Manually")
+        num_players = int(input("Enter the number of players: "))
+        player_names = [input(f"Enter name for player{i + 1}:") for i in 
+        range(num_players)]
+
+    for name in player_names:
+        ranking_system.add_player(name)
+
+    num_matches = int(input("Enter Number Of Matches Played: "))
+    for i in range(num_matches):
+        players_involved = input(f"Enter Players names involved in match{i + 1} (comma-seperated:) ").split(',') 
+        result = input"("Enter Match result(win/draw): ")  
