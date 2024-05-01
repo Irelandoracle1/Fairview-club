@@ -51,3 +51,76 @@ class player:
         this will return a string representing the players
         """
         return f"{self.name}: Appearances -{self.appearances} ,Goal Scored- {self.goals_scored}, Points{self.points}, Contribution{self.contribution} euros,"  
+
+
+class RankingSystem:
+    """
+    This class is to manage  player rankings.
+    """
+    def _init_(self,player):
+        """
+        this will initialize the rankingSystem with the name of the 
+        player sheet
+        """
+        self.players = {}
+        self.player=player
+        self.gc = self.authorize_google_sheets()
+
+    def get_player_sheet(self):
+        """
+        this will get google sheet for player details
+        """
+        return self.gc.open(self.player_sheet_name).sheet1
+
+    def add_player(self,name):
+        """
+        add player to file   
+        """
+        if name not in self.players:
+            self.players[name]  = player(name) 
+
+    def record_match_result(self, player_name, result):
+        """
+        this will record match results and update player stats
+        """      
+        for name in player_name:
+            if name in self.players:
+                player = self.players[name]
+                player.add_appearance()
+                if result == "win":
+                    player.add_points(3)
+                elif result == "draw":
+                    player.add_points(2)  
+
+    def record_offence(self,player_name):
+        """
+        This will record offense and remove from player points
+        """
+        if player_name in self.player:
+            player = self.players[player_name]
+            player.deduct_points(2)
+
+
+    def update_player_sheet(self):
+        """
+        this will update google sheet with player data
+        """
+        sheet = self.get_player_sheet()
+        sheet.clear()
+        sheet.append_row(["player","appearance", "Goals Scored",
+         "Points", "Contribution"])
+
+        for player in self.players.values():
+            sheet.append_row([player.name,player.appearance,
+            player.goals_scored,player.points,player.contribution])
+
+
+    def display_ranking(self):
+        """
+        this will display player ranking on table
+        """
+        sorted_player = sorted(self.player.values(), key = lambda x:
+        x.points, reverse = True)
+        print("Rankings")
+        for i, players in enumerate(sorted_players, 1):
+            print(f"{i}.{player}")
