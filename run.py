@@ -124,3 +124,17 @@ class RankingSystem:
         print("Rankings")
         for i, players in enumerate(sorted_players, 1):
             print(f"{i}.{player}")
+
+
+class ContributionSystem:
+    """
+    This class will manage player contributions and expenses 
+    made by admin
+    """
+    def _init_(self, contributions):
+        """
+        this function will initialize contribution system 
+        """
+        self.contributions = contributions
+        self.gc = self.authorize_google_sheets()
+
