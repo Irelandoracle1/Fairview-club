@@ -157,4 +157,14 @@ class ContributionSystem:
             print("Expenses record and deducted from total balance")
 
         else:
-            print("Access Denied. Admin details required")     
+            print("Access Denied. Admin details required")  
+
+
+    def record_expenses(self, expenses):
+        """
+        record expenses
+        """
+        sheet = self.get_contribution_sheet()
+        expenses_cell = sheet.acell("c2")
+        expenses_cell.value = str(expenses)
+
