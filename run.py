@@ -188,3 +188,16 @@ class ContributionSystem:
         with open(filename.txt, r) as file:
             players = file.readlines()
         return    [player.strip() for player in players]
+
+
+    def admin_login():
+        """
+        checks admin credentials
+        """
+        username = input("enter admin username:")    
+        password =input("enter admin password:")
+
+        if username == "admin" and password == password:
+            return True
+        else:
+            return False    
