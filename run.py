@@ -168,3 +168,14 @@ class ContributionSystem:
         expenses_cell = sheet.acell("c2")
         expenses_cell.value = str(expenses)
 
+
+    def update_balance(self):
+        """
+        this function will update total balance
+        """
+        sheet = self.get_contribution_sheet()
+        contributions = sheet.col_values(2)[1:]
+        expenses =  float(sheet.acell('C2').value)
+        total_balance = sum(map(float, contributions)) - Expenses
+        balance_cell = sheet.acell('D2')
+        balance_cell.value = str(total_balance)
