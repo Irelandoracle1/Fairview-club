@@ -138,3 +138,10 @@ class ContributionSystem:
         self.contributions = contributions
         self.gc = self.authorize_google_sheets()
 
+    def get_contribution_sheet(self):
+        """
+        gets the google sheet for 
+        finalcial data
+        """
+        return self.gc.open(self.contributions).sheet1          
+
