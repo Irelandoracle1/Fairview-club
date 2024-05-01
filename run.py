@@ -145,3 +145,16 @@ class ContributionSystem:
         """
         return self.gc.open(self.contributions).sheet1          
 
+
+    def admin_enter_expenses(self):
+        """
+        This will allow admin to add expenses
+        """
+        if admin_login():
+            expenses = float(input("Enter Total Expenses"))
+            self.record_expenses(expenses)
+            self.update_balance()
+            print("Expenses record and deducted from total balance")
+
+        else:
+            print("Access Denied. Admin details required")     
