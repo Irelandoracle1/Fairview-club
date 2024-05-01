@@ -179,3 +179,12 @@ class ContributionSystem:
         total_balance = sum(map(float, contributions)) - Expenses
         balance_cell = sheet.acell('D2')
         balance_cell.value = str(total_balance)
+
+
+    def read_players_from_file(filename):
+        """
+        read players from file
+        """
+        with open(filename.txt, r) as file:
+            players = file.readlines()
+        return    [player.strip() for player in players]
