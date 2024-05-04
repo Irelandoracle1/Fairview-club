@@ -17,60 +17,88 @@ class Player:
     """
     Represents a player in the football team.
     """
+
     def __init__(self, name):
-        """Initializes a player with their name."""
         self.name = name
-        self.appearance = 0
+        self.appearances = 0
         self.goals_scored = 0
         self.points = 0
         self.contribution = 0
 
     def add_appearance(self):
-        """Increments the player's appearance count and points."""
-        self.appearance += 1
+        """
+        Increment player's appearance count.
+        """
+        self.appearances += 1
         self.points += 1
 
     def add_goals(self, goals):
-        """Increments the player's goals scored."""
+        """
+        Add goals scored by the player.
+        """
         self.goals_scored += goals
 
     def add_points(self, points):
-        """Adds points to the player's total."""
+        """
+        Add points to the player's total.
+        """
         self.points += points
 
     def deduct_points(self, points):
-        """Deducts points from the player's total."""
+        """
+        Deduct points from the player's total.
+        """
         self.points -= points
 
     def add_contribution(self, amount):
-        """Adds a financial contribution to the player's total."""
+        """
+        Add financial contribution made by the player.
+        """
         self.contribution += amount
 
     def __str__(self):
-        """Returns a string representation of the player."""
-        return f"{self.name}: Appearances - {self.appearance}, Goals Scored - {self.goals_scored}, Points - {self.points}, Contribution - {self.contribution} euros"
+        """
+        String representation of the player.
+        """
+        return f"{self.name}: Appearances - {self.appearances}, Goals Scored - {self.goals_scored}, Points - {self.points}, Contribution - {self.contribution} euros"
 
 
 class RankingSystem:
     """
-    Manages player rankings and statistics.
+    Manages player rankings.
     """
+
     def __init__(self, player_sheet_name):
-        """Initializes the RankingSystem with the name of the player sheet."""
+        """
+        Initialize the RankingSystem with the player sheet name.
+        """
         self.players = {}
         self.player_sheet_name = player_sheet_name
+        self.sheet = self.get_player_sheet()
 
     def get_player_sheet(self):
-        """Gets the Google Sheet for player data."""
-        return GSPREAD_CLIENT.open(self.player_sheet_name).sheet1
+        """
+        Get the Google Sheets object for player details.
+        """
+        return GSPREAD_CLIENT.open(self.player_sheet_name).worksheet('Players')
 
     def add_player(self, name):
-        """Adds a new player to the system."""
-        if name not in self.players:
+        """
+        Add a player to the team.
+        """
+        if name not in self.get_players():
             self.players[name] = Player(name)
 
+    def get_players(self):
+        """
+        Get the list of players from the player sheet.
+        """
+        return [player[0] for player in self.sheet.get_all_values()[1:]]
+
     def record_match_result(self, player_names, result):
-        """Records match results and updates player stats."""
+        """
+        Record match results and update player stats.
+        """
         for name in player_names:
             if name in self.players:
                 player = self.players[name]
@@ -78,124 +106,155 @@ class RankingSystem:
                 if result == "win":
                     player.add_points(3)
                 elif result == "draw":
-                    player.add_points(2)
+                    player.add_points(1)
 
-    def record_offense(self, player_name):
-        """Records offenses and deducts points from player's total."""
+    def record_offence(self, player_name):
+        """
+        Record offense and remove points from the player's total.
+        """
         if player_name in self.players:
             player = self.players[player_name]
             player.deduct_points(2)
 
     def update_player_sheet(self):
-        """Updates Google Sheet with player data."""
-        sheet = self.get_player_sheet()
-        sheet.clear()
-        sheet.append_row(["Player", "Appearance", "Goals Scored", "Points", "Contribution"])
+        """
+        Update Google Sheet with player data.
+        """
+        self.sheet.clear()
+        self.sheet.append_row(["Player", "Appearances", "Goals Scored", "Points", "Contribution"])
         for player in self.players.values():
-            sheet.append_row([player.name, player.appearance, player.goals_scored, player.points, player.contribution])
+            self.sheet.append_row([player.name, player.appearances, player.goals_scored, player.points, player.contribution])
 
     def display_rankings(self):
-        """Displays player rankings."""
+        """
+        Display player rankings.
+        """
         sorted_players = sorted(self.players.values(), key=lambda x: x.points, reverse=True)
         print("Rankings:")
         for i, player in enumerate(sorted_players, 1):
             print(f"{i}. {player}")
+
+    def record_match_result(self, player_names, result):
+        """
+        Record match results and update player stats.
+        If a player is not found, add them dynamically.
+        """
+        for name in player_names:
+            if name not in self.players:
+                self.add_player(name)
+            player = self.players[name]
+            player.add_appearance()
+            if result == "win":
+                player.add_points(3)
+            elif result == "draw":
+                player.add_points(1)        
 
 
 class ContributionSystem:
     """
     Manages player contributions and expenses.
     """
+
     def __init__(self, contribution_sheet_name):
-        """Initializes the ContributionSystem with the name of the contribution sheet."""
+        """
+        Initialize the ContributionSystem with the contribution sheet name.
+        """
         self.contribution_sheet_name = contribution_sheet_name
+        self.sheet = self.get_contribution_sheet()
 
     def get_contribution_sheet(self):
-        """Gets the Google Sheet for financial data."""
-        return GSPREAD_CLIENT.open(self.contribution_sheet_name).sheet1
-
-    def admin_enter_expenses(self):
-        """Allows admin to add expenses."""
-        if self.admin_login():
-            expenses = float(input("Enter Total Expenses: "))
-            self.record_expenses(expenses)
-            self.update_balance()
-            print("Expenses recorded and deducted from total balance.")
-        else:
-            print("Access Denied. Admin credentials required.")
-
-    def record_expenses(self, expenses):
-        """Records expenses in the contribution sheet."""
-        sheet = self.get_contribution_sheet()
-        expenses_cell = sheet.acell("C2")
-        expenses_cell.value = str(expenses)
-
-    def update_balance(self):
-        """Updates the total balance after deducting expenses."""
-        sheet = self.get_contribution_sheet()
-        contributions = sheet.col_values(2)[1:]
-        expenses = float(sheet.acell('C2').value)
-        total_balance = sum(map(float, contributions)) - expenses
-        balance_cell = sheet.acell('D2')
-        balance_cell.value = str(total_balance)
-
-    def admin_login(self):
-        """Checks admin credentials."""
-        username = input("Enter admin username: ")
-        password = input("Enter admin password: ")
-        return username == "admin" and password == "password"
+        """
+        Get the Google Sheets object for contribution details.
+        """
+        return GSPREAD_CLIENT.open(self.contribution_sheet_name).worksheet('Contributions')
 
     def record_contribution(self, player_name, amount):
-        """Records a financial contribution made by a player."""
-        sheet = self.get_contribution_sheet()
-        contributions = sheet.get_all_values()[1:]  # Exclude header row
-        for row in contributions:
-            if row[0] == player_name:
-                row[1] = str(float(row[1]) + amount)
-                break
-        else:
-            sheet.append_row([player_name, amount])
+        """
+        Record player's financial contribution.
+        """
+        self.sheet.append_row([player_name, amount])
+
+    def record_expenses(self, expenses):
+        """
+        Record team expenses.
+        """
+        self.sheet.append_row(["Expenses", expenses])
+
+    def update_balance(self):
+        """
+        Update the balance after deducting expenses.
+        """
+        contributions = self.sheet.col_values(2)[1:]
+        expenses = float(self.sheet.acell('B2').value)
+        total_balance = sum(map(float, contributions)) - expenses
+        self.sheet.append_row(["Balance", total_balance])
+
+
+def admin_login():
+    """
+    Checks admin credentials.
+    """
+    username = input("Enter admin username: ")
+    password = input("Enter admin password: ")
+
+    # Add your desired admin username and password here
+    admin_username = "admin"
+    admin_password = "password"
+
+    if username == admin_username and password == admin_password:
+        return True
+    else:
+        return False
 
 
 def main():
-    """Runs the application."""
-    player_sheet_name = "Players"
-    contribution_sheet_name = "Fairview_ Football_ All_Stars_Contributions"
+    """
+    Main function to run the application.
+    """
+    player_sheet_name = "Fairview_Football_All_Stars_Contributions"
+    contribution_sheet_name = "Fairview_Football_All_Stars_Contributions"
+
     ranking_system = RankingSystem(player_sheet_name)
     contribution_system = ContributionSystem(contribution_sheet_name)
 
-    if not contribution_system.admin_login():
+    if not admin_login():
         print("Invalid credentials. Access denied.")
         return
 
-    num_players = int(input("Enter the number of players: "))
-    player_names = [input(f"Enter name for player {i+1}: ") for i in range(num_players)]
+    while True:
+        print("\nSelect an option:")
+        print("1. Record match result")
+        print("2. Record player contribution")
+        print("3. Record team expenses")
+        print("4. Update player rankings")
+        print("5. Exit")
+        choice = input("Enter your choice: ")
 
-    for name in player_names:
-        ranking_system.add_player(name)
-
-    num_matches = int(input("Enter the number of matches played: "))
-    for i in range(num_matches):
-        players_involved = input(f"Enter player names involved in match {i+1} (comma-separated): ").split(',')
-        result = input("Enter match result (win/draw): ")
-        ranking_system.record_match_result(players_involved, result)
-
-    num_offenses = int(input("Enter the number of offenses: "))
-    for i in range(num_offenses):
-        player_name = input(f"Enter the name of the player committing offense {i+1}: ")
-        ranking_system.record_offense(player_name)
-
-    num_contributions = int(input("Enter the number of contributions: "))
-    for i in range(num_contributions):
-        player_name = input(f"Enter the name of the player making contribution {i+1}: ")
-        amount = float(input("Enter the amount of contribution: "))
-        contribution_system.record_contribution(player_name, amount)
-
-    contribution_system.admin_enter_expenses()
-    contribution_system.update_balance()
-    ranking_system.update_player_sheet()
-    ranking_system.display_rankings()
-
+        if choice == "1":
+            player_names = input("Enter player names (comma-separated): ").split(",")
+            result = input("Enter match result (win/draw): ")
+            ranking_system.record_match_result(player_names, result)
+            ranking_system.update_player_sheet()  # Update player sheet after recording match result
+        elif choice == "2":
+            player_name = input("Enter player name: ")
+            if player_name not in ranking_system.players:
+                ranking_system.add_player(player_name)
+            amount = float(input("Enter contribution amount: "))
+            ranking_system.players[player_name].add_contribution(amount)
+            contribution_system.record_contribution(player_name, amount)
+            ranking_system.update_player_sheet()  # Update player sheet after recording contribution
+        elif choice == "3":
+            expenses = float(input("Enter expenses amount: "))
+            contribution_system.record_expenses(expenses)
+            contribution_system.update_balance()
+        elif choice == "4":
+            ranking_system.update_player_sheet()
+            ranking_system.display_rankings()
+        elif choice == "5":
+            print("Exiting...")
+            break
+        else:
+            print("Invalid choice. Please try again.")
 
 if __name__ == "__main__":
     main()
