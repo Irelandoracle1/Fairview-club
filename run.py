@@ -37,6 +37,7 @@ class Player:
         Add goals scored by the player.
         """
         self.goals_scored += goals
+        self.points += goals  # Update points when goals are scored
 
     def add_points(self, points):
         """
@@ -95,18 +96,21 @@ class RankingSystem:
         """
         return [player[0] for player in self.sheet.get_all_values()[1:]]
 
-    def record_match_result(self, player_names, result):
+    def record_match_result(self, player_names, result, goals_scored):
         """
-        Record match results and update player stats.
+        Record match results, update player stats, and record goals scored.
         """
         for name in player_names:
-            if name in self.players:
-                player = self.players[name]
-                player.add_appearance()
-                if result == "win":
-                    player.add_points(3)
-                elif result == "draw":
-                    player.add_points(1)
+            if name not in self.players:
+                self.add_player(name)
+            player = self.players[name]
+            player.add_appearance()
+            if result == "win":
+                player.add_points(3)
+            elif result == "draw":
+                player.add_points(1)
+            player.add_goals(goals_scored[name])  # Record goals scored by the player
+        self.update_player_sheet()  # Update player sheet after recording match result
 
     def record_offence(self, player_name):
         """
@@ -133,21 +137,6 @@ class RankingSystem:
         print("Rankings:")
         for i, player in enumerate(sorted_players, 1):
             print(f"{i}. {player}")
-
-    def record_match_result(self, player_names, result):
-        """
-        Record match results and update player stats.
-        If a player is not found, add them dynamically.
-        """
-        for name in player_names:
-            if name not in self.players:
-                self.add_player(name)
-            player = self.players[name]
-            player.add_appearance()
-            if result == "win":
-                player.add_points(3)
-            elif result == "draw":
-                player.add_points(1)        
 
 
 class ContributionSystem:
@@ -233,8 +222,11 @@ def main():
         if choice == "1":
             player_names = input("Enter player names (comma-separated): ").split(",")
             result = input("Enter match result (win/draw): ")
-            ranking_system.record_match_result(player_names, result)
-            ranking_system.update_player_sheet()  # Update player sheet after recording match result
+            goals_scored = {}
+            for name in player_names:
+                goals = int(input(f"Enter goals scored by {name}: "))
+                goals_scored[name] = goals
+            ranking_system.record_match_result(player_names, result, goals_scored)
         elif choice == "2":
             player_name = input("Enter player name: ")
             if player_name not in ranking_system.players:
