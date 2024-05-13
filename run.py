@@ -1,5 +1,6 @@
 import gspread
 from google.oauth2.service_account import Credentials
+import pandas as pd 
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -68,6 +69,7 @@ class RankingSystem:
     """
     Manages player rankings.
     """
+    #PLAYERS = {}
 
     def __init__(self, player_sheet_name):
         """
@@ -87,8 +89,8 @@ class RankingSystem:
         """
         Add a player to the team.
         """
-        if name not in self.get_players():
-            self.players[name] = Player(name)
+        #if name not in self.get_players():
+        self.players[name] = Player(name)
 
     def get_players(self):
         """
@@ -112,6 +114,34 @@ class RankingSystem:
             player.add_goals(goals_scored[name])  # Record goals scored by the player
         self.update_player_sheet()  # Update player sheet after recording match result
 
+    def record_match_result_v2(self, player_names, result, goals_scored):
+        """
+        Record match results, update player stats, and record goals scored.
+        """
+        players = self.get_players()
+        for name in player_names:
+            if name not in players:
+                self.add_player(name)
+                player = self.players[name]
+                player.add_appearance()
+                if result == "win":
+                    player.add_points(3)
+                elif result == "draw":
+                    player.add_points(1)
+                player.add_goals(goals_scored[name])  # Record goals scored by the player
+            elif name in players:
+                print('player exists!!!')
+                player = self.players[name]
+                player.add_appearance()
+                if result == "win":
+                    player.add_points(3)
+                elif result == "draw":
+                    player.add_points(1)
+                player.add_goals(goals_scored[name])
+
+        print(self.players)
+        self.update_player_sheet()
+
     def record_offence(self, player_name):
         """
         Record offense and remove points from the player's total.
@@ -124,10 +154,29 @@ class RankingSystem:
         """
         Update Google Sheet with player data.
         """
-        self.sheet.clear()
-        self.sheet.append_row(["Player", "Appearances", "Goals Scored", "Points", "Contribution"])
-        for player in self.players.values():
-            self.sheet.append_row([player.name, player.appearances, player.goals_scored, player.points, player.contribution])
+        df = pd.DataFrame(self.sheet.get_all_records())
+        print(df)
+        columns = ["Player", "Appearances", "Goals Scored", "Points", "Contribution"]
+        if df.empty:
+            for player in self.players.values():
+                df = pd.concat([pd.DataFrame([[player.name, player.appearances, player.goals_scored, player.points, player.contribution]], columns=columns), df], ignore_index=True)
+            #self.sheet.update([df.columns.values.tolist()] + df.values.tolist())
+        else:
+            for player in self.players.values():
+                print([player.name, player.appearance, player.goals_scored, player.points, player.contribution])
+                if player.name in df.Player:
+                    df.loc[df.Player == player.name, columns] = [player.name, player.appearance, player.goals_scored, player.points, player.contribution]
+                else:
+                    df = pd.concat([pd.DataFrame([[player.name, player.appearances, player.goals_scored, player.points, player.contribution]], columns=columns), df], ignore_index=True)
+        self.sheet.update([df.columns.values.tolist()] + df.values.tolist()) 
+
+        # is_empty = len(self.sheet.get_all_values()) == 1
+        # print(is_empty)
+        # print(self.players)
+        # if is_empty:
+        #     self.sheet.append_row(["Player", "Appearances", "Goals Scored", "Points", "Contribution"])
+        # for player in self.players.values():
+        #     self.sheet.append_row([player.name, player.appearances, player.goals_scored, player.points, player.contribution])
 
     def display_rankings(self):
         """
@@ -161,6 +210,7 @@ class ContributionSystem:
         """
         Record player's financial contribution.
         """
+
         self.sheet.append_row([player_name, amount])
 
     def record_expenses(self, expenses):
@@ -206,9 +256,9 @@ def main():
     ranking_system = RankingSystem(player_sheet_name)
     contribution_system = ContributionSystem(contribution_sheet_name)
 
-    if not admin_login():
-        print("Invalid credentials. Access denied.")
-        return
+    # if not admin_login():
+    #     print("Invalid credentials. Access denied.")
+    #     return
 
     while True:
         print("\nSelect an option:")
@@ -221,12 +271,13 @@ def main():
 
         if choice == "1":
             player_names = input("Enter player names (comma-separated): ").split(",")
+            player_names = [name.strip() for name in player_names]
             result = input("Enter match result (win/draw): ")
             goals_scored = {}
             for name in player_names:
                 goals = int(input(f"Enter goals scored by {name}: "))
                 goals_scored[name] = goals
-            ranking_system.record_match_result(player_names, result, goals_scored)
+            ranking_system.record_match_result_v2(player_names, result, goals_scored)
         elif choice == "2":
             player_name = input("Enter player name: ")
             if player_name not in ranking_system.players:
