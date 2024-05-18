@@ -131,7 +131,7 @@ class RankingSystem:
             'goals_scored': player['goals_scored'], 
             'point': player['point'], 
             'contribution': player['contribution']} for player in players]).sort_values(by=['point'], ascending=False)
-        print(df)
+        df.columns = columns
         self.sheet.update([df.columns.values.tolist()] + df.values.tolist())
 
 def admin_login():
@@ -157,7 +157,7 @@ def main():
     """
     create_player_table()
     player_sheet_name = "Fairview_Football_All_Stars_Contributions"
-    ranking_system = RankingSystem_v2(player_sheet_name)
+    ranking_system = RankingSystem(player_sheet_name)
 
     # if not admin_login():
     #     print("Invalid credentials. Access denied.")
