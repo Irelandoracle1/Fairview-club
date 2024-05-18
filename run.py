@@ -159,9 +159,9 @@ def main():
     player_sheet_name = "Fairview_Football_All_Stars_Contributions"
     ranking_system = RankingSystem(player_sheet_name)
 
-    # if not admin_login():
-    #     print("Invalid credentials. Access denied.")
-    #     return
+    if not admin_login():
+        print("Invalid credentials. Access denied.")
+        return
 
     while True:
         print("\nSelect an option:")
