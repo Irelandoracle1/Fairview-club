@@ -1,6 +1,14 @@
 import gspread
 from google.oauth2.service_account import Credentials
 import pandas as pd 
+import sqlite3 as sq
+import os
+
+
+current_dir = os.getcwd()
+database_path = os.path.join(current_dir, r'data.db')
+print(database_path)
+
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -12,6 +20,27 @@ SCOPE = [
 CREDS = Credentials.from_service_account_file('creds.json')
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
+
+class DatabaseConnection:
+    def __init__(self, host) -> None:
+        self.connection = None
+        self.host = host
+
+    def __enter__(self) -> sq.Connection:
+        self.connection = sq.connect(self.host)
+        return self.connection
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        if exc_type or exc_val or exc_tb:
+            self.connection.close()
+        else:
+            self.connection.commit()
+            self.connection.close()
+
+def create_player_table() -> None:
+    with DatabaseConnection(database_path) as connection:
+        cursor = connection.cursor()
+        cursor.execute('CREATE TABLE IF NOT EXISTS players (name text primary key, appearance integer, goal_scored integer, point integer, contribution integer)')
 
 
 class Player:
@@ -63,6 +92,58 @@ class Player:
         String representation of the player.
         """
         return f"{self.name}: Appearances - {self.appearances}, Goals Scored - {self.goals_scored}, Points - {self.points}, Contribution - {self.contribution} euros"
+
+class RankingSystem_v2:
+    def __init__(self, player_sheet_name):
+        self.player_sheet_name = player_sheet_name
+        self.sheet = self.get_player_sheet()
+
+    def get_player_sheet(self):
+        return GSPREAD_CLIENT.open(self.player_sheet_name).worksheet('Players')
+
+    def add_player(self, name, appearance, goals_scored, point, contribution):
+        with DatabaseConnection(database_path) as connection:
+            cursor = connection.cursor()
+            cursor.execute('INSERT INTO players (?, ?, ?, ?, ?)', (name, appearance, goals_scored, point, contribution))
+
+    def get_all_players(self):
+        with DatabaseConnection(database_path) as connection:
+            cursor = connection.cursor()
+            cursor.execute('SELECT * FROM players')
+            players = [{
+                'name': row[0], 'appearance': row[1], 'goals_scored': row[2],
+                'point': row[3], 'contribution': row[4]
+            } for row in cursor.fetchall()]
+        return players
+
+    def record_match_result_v2(self, player_names, result, goals_scored):
+        """
+        Record match results, update player stats, and record goals scored.
+        """
+        players = self.get_all_players()
+        print(players)
+        # for name in player_names:
+        #     if name not in players:
+        #         self.add_player(name)
+        #         player = self.players[name]
+        #         player.add_appearance()
+        #         if result == "win":
+        #             player.add_points(3)
+        #         elif result == "draw":
+        #             player.add_points(1)
+        #         player.add_goals(goals_scored[name])  # Record goals scored by the player
+        #     elif name in players:
+        #         print('player exists!!!')
+        #         player = self.players[name]
+        #         player.add_appearance()
+        #         if result == "win":
+        #             player.add_points(3)
+        #         elif result == "draw":
+        #             player.add_points(1)
+        #         player.add_goals(goals_scored[name])
+
+        # print(self.players)
+        # self.update_player_sheet()
 
 
 class RankingSystem:
@@ -170,13 +251,6 @@ class RankingSystem:
                     df = pd.concat([pd.DataFrame([[player.name, player.appearances, player.goals_scored, player.points, player.contribution]], columns=columns), df], ignore_index=True)
         self.sheet.update([df.columns.values.tolist()] + df.values.tolist()) 
 
-        # is_empty = len(self.sheet.get_all_values()) == 1
-        # print(is_empty)
-        # print(self.players)
-        # if is_empty:
-        #     self.sheet.append_row(["Player", "Appearances", "Goals Scored", "Points", "Contribution"])
-        # for player in self.players.values():
-        #     self.sheet.append_row([player.name, player.appearances, player.goals_scored, player.points, player.contribution])
 
     def display_rankings(self):
         """
@@ -250,10 +324,12 @@ def main():
     """
     Main function to run the application.
     """
+    create_player_table()
     player_sheet_name = "Fairview_Football_All_Stars_Contributions"
     contribution_sheet_name = "Fairview_Football_All_Stars_Contributions"
 
-    ranking_system = RankingSystem(player_sheet_name)
+
+    ranking_system = RankingSystem_v2(player_sheet_name)
     contribution_system = ContributionSystem(contribution_sheet_name)
 
     # if not admin_login():
