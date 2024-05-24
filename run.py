@@ -138,8 +138,8 @@ def admin_login():
     """
     Checks admin credentials.
     """
-    username = input("Enter admin username: ")
-    password = input("Enter admin password: ")
+    username = input("Enter admin username:\n ")
+    password = input("Enter admin password:\n ")
 
     # Add your desired admin username and password here
     admin_username = "admin"
@@ -168,22 +168,22 @@ def main():
         print("1. Record match result")
         print("2. Record player contribution")
         print("3. Exit")
-        choice = input("Enter your choice: ")
+        choice = input("Enter your choice:\n ")
 
         if choice == "1":
-            player_names = input("Enter player names (comma-separated): ").split(",")
+            player_names = input("Enter player names (comma-separated):\n ").split(",")
             player_names = [name.strip() for name in player_names]
-            result = input("Enter match result (win/draw): ")
+            result = input("Enter match result (win/draw):\n ")
             goals_scored = {}
             for name in player_names:
-                goals = int(input(f"Enter goals scored by {name}: "))
+                goals = int(input(f"Enter goals scored by {name}:\n "))
                 goals_scored[name] = goals
             ranking_system.post_match_result(player_names, result, goals_scored)
         elif choice == "2":
-            player_name = input("Enter player name: ")
+            player_name = input("Enter player name:\n ")
             player = ranking_system.get_player(player_name)
             if player:
-                contribution_amount = int(input("Enter contribution amount: "))
+                contribution_amount = int(input("Enter contribution amount:\n "))
                 ranking_system.post_contribution(player_name, contribution_amount)
         elif choice == "3":
             print("Exiting...")
