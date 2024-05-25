@@ -186,7 +186,7 @@ def main():
                 contribution_amount = int(input("Enter contribution amount:\n "))
                 ranking_system.post_contribution(player_name, contribution_amount)
         elif choice == "3":
-            print("Exiting...")
+            print("Exiting.../n Press run program to continue updating")
             break
         else:
             print("Invalid choice. Please try again.")
