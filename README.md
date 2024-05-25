@@ -4,6 +4,28 @@
 
 The Fairview Football Application is a Python-based system designed to manage player statistics and contributions for a football team. It integrates with Google Sheets to store and update player data.
 
+
+### Here Is The Live Version
+
+  ![App image ](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview9.jpg)
+
+   ![App image]()
+
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview2.jpg)
+
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview3.jpg)
+
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview4.jpg)
+
+   ![GApp image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview5.jpg)
+
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview6.jpg)
+
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview7.jpg)
+
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview8.jpg)
+
+
 ## Features
 
 - Record match results and update player statistics.
@@ -306,49 +328,3 @@ if __name__ == "__main__":
     main()
 
 
-### Here Is The Live Version
-![Responsive Mockup](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview9.jpg)
-### Existing Features
-
-- __Automatic Game Boards__
-
-  - Two game boards are automatically generated. One for the player and one for the computer
-  - The ship positions are hidden in both the player and computer's game boards
-  ![Game Boards](https://raw.githubusercontent.com/Irelandoracle1/mybattleship/main/images/sumo4.png)
-  - Player and computer play turns are executed simultaneously
-  - The Game Prompts And Recieves User's Input
-  - Manages Scores For Every Game Round.
-  
-  
-  
-  ### Here Is The Live Version
-
-  ![App image ](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview9.jpg)
-
-   ![App image](images/fairview1.jpg)
-
-   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview2.jpg)
-
-   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview3.jpg)
-
-   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview4.jpg)
-
-   ![GApp image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview5.jpg)
-
-   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview6.jpg)
-
-   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview7.jpg)
-
-   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview8.jpg)
-
-
-
-
-
-- __Error Handling And Input Validation__
-
-  - The player or computer are not allowed to guess a grid (row and column) twice 
-  - The player cannot enter any other value apart from numbers within the specified range(0 to 4)
-
-  ![Error Handling](https://github.com/Irelandoracle1/mybattleship/blob/main/images/sumo6.png)
-  - The Game Data is managed in a single class instance or object
