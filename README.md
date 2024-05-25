@@ -307,7 +307,7 @@ if __name__ == "__main__":
 
 
 ### Here Is The Live Version
-![Responsive Mockup](https://raw.githubusercontent.com/Irelandoracle1/mybattleship/main/images/sumo1.jpg)
+![Responsive Mockup](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview9.jpg)
 ### Existing Features
 
 - __Automatic Game Boards__
@@ -319,7 +319,19 @@ if __name__ == "__main__":
   - The Game Prompts And Recieves User's Input
   - Manages Scores For Every Game Round
 
-   ![Game Play](https://github.com/Irelandoracle1/mybattleship/blob/main/images/sumo5.png)
+   ![App image ](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview9.jpg)
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview1.jpg)
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview2.jpg)
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview3.jpg)
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview4.jpg)
+   ![GApp image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview5.jpg)
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview6.jpg)
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview7.jpg)
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview8.jpg)
+
+
+
+
 
 - __Error Handling And Input Validation__
 
