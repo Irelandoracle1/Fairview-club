@@ -317,16 +317,28 @@ if __name__ == "__main__":
   ![Game Boards](https://raw.githubusercontent.com/Irelandoracle1/mybattleship/main/images/sumo4.png)
   - Player and computer play turns are executed simultaneously
   - The Game Prompts And Recieves User's Input
-  - Manages Scores For Every Game Round
+  - Manages Scores For Every Game Round.
+  
+  
+  
+  ### Here Is The Live Version
 
-   ![App image ](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview9.jpg)
-   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview1.jpg)
+  ![App image ](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview9.jpg)
+
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview1.jpg?raw=true)
+
    ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview2.jpg)
+
    ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview3.jpg)
+
    ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview4.jpg)
+
    ![GApp image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview5.jpg)
+
    ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview6.jpg)
+
    ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview7.jpg)
+
    ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview8.jpg)
 
 
