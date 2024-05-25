@@ -164,7 +164,7 @@ def main():
         return
 
     while True:
-        print(" \n Welcome To Fairview Football Application")
+        print("\nWelcome To Fairview Football Application")
         print("\nSelect an option:")
         print("1. Record match result")
         print("2. Record player contribution")
