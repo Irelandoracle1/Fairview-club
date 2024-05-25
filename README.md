@@ -9,7 +9,7 @@ The Fairview Football Application is a Python-based system designed to manage pl
 
   ![App image ](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview9.jpg)
 
-   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview2.jpg)
+   ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview1.jpg)
 
    ![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview2.jpg)
 
