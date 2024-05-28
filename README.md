@@ -108,10 +108,7 @@ Run the application locally:
 
 
 
-
-python3 run.py
-
-On running, you'll be prompted to log in as an admin and presented with options to record match results, record player contributions, or exit the application.
+on running, you'll be prompted to log in as an admin and presented with options to record match results, record player contributions, or exit the application.
 
 Admin Login
 Default admin credentials:
@@ -288,8 +285,8 @@ def admin_login():
         return True
     else:
         return False
-Main Function
-The main function runs the application and presents the admin with options:
+- Main Function
+- The  main function runs the application and presents the admin with options:
 
 
 def main():
@@ -338,9 +335,9 @@ if __name__ == "__main__":
 
 ## Testing 
  I have manually tested this application through this process
--I inputed wrong values. Such as adding empty values, string values and adding the same coordinates twice
--I passed the code through the PEP8online.com test and confirmed there is no error on my code
--Tested the App in my local terminal and also my Heroku hosted terminal
+- I inputed wrong values. Such as adding empty values, string values and adding the same coordinates twice
+- I passed the code through the PEP8online.com test and confirmed there is no error on my code
+- Tested the App in my local terminal and also my Heroku hosted terminal
  
 ### Validator Testing 
 -PEP8
@@ -352,7 +349,7 @@ if __name__ == "__main__":
 
 ### Unfixed Bugs
 
-No Bug is left unfixed
+- No Bug is left unfixed
 
 
 ## Credits 
