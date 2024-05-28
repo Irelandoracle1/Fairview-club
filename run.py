@@ -39,7 +39,11 @@ class DatabaseConnection:
 def create_player_table() -> None:
     with DatabaseConnection(database_path) as connection:
         cursor = connection.cursor()
-        cursor.execute('CREATE TABLE IF NOT EXISTS players (name text primary key, appearance integer, goals_scored integer, point integer, contribution integer)')
+        cursor.execute(
+            'CREATE TABLE IF NOT EXISTS players '
+            '(name text primary key, appearance integer, '
+            'goals_scored integer, point integer, contribution integer)'
+        )
 
 
 class RankingSystem:
@@ -53,42 +57,60 @@ class RankingSystem:
     def add_player(self, name, appearance, goals_scored, point):
         with DatabaseConnection(database_path) as connection:
             cursor = connection.cursor()
-            cursor.execute('INSERT INTO players VALUES (?, ?, ?, ?, 0)', (name, appearance, goals_scored, point))
+            cursor.execute(
+                'INSERT INTO players VALUES (?, ?, ?, ?, 0)',
+                (name, appearance, goals_scored, point)
+            )
 
-    def update_player(self, name, appearance, goals_scored, point, contribution):
+    def update_player(self, name, appearance, goals_scored, point,
+                      contribution):
         with DatabaseConnection(database_path) as connection:
             cursor = connection.cursor()
-            cursor.execute('UPDATE players SET appearance=?, goals_scored=?, point=?, contribution=? where name=?', (appearance, goals_scored, point, contribution, name))
+            cursor.execute(
+                'UPDATE players SET appearance=?, goals_scored=?, point=?, '
+                'contribution=? WHERE name=?',
+                (appearance, goals_scored, point, contribution, name)
+            )
 
     def get_all_players(self):
         with DatabaseConnection(database_path) as connection:
             cursor = connection.cursor()
             cursor.execute('SELECT * FROM players')
-            players = [{
-                'name': row[0], 'appearance': row[1], 'goals_scored': row[2],
-                'point': row[3], 'contribution': row[4]
-            } for row in cursor.fetchall()]
+            players = [
+                {
+                    'name': row[0], 'appearance': row[1],
+                    'goals_scored': row[2],
+                    'point': row[3], 'contribution': row[4]
+                } for row in cursor.fetchall()
+            ]
         return players
 
     def get_player(self, name):
         with DatabaseConnection(database_path) as connection:
             cursor = connection.cursor()
-            cursor.execute('SELECT * FROM players where name=?', (name,))
+            cursor.execute('SELECT * FROM players WHERE name=?', (name,))
             rows = cursor.fetchall()
 
             if not rows:
                 return None
-            player = [{
-                    'name': row[0], 'appearance': row[1], 'goals_scored': row[2],
+
+            player = [
+                {
+                    'name': row[0], 'appearance': row[1],
+                    'goals_scored': row[2],
                     'point': row[3], 'contribution': row[4]
-                } for row in rows][0]
+                } for row in rows
+            ][0]
             return player
 
     def post_contribution(self, name, amount):
         player = self.get_player(name)
         if player:
             player['contribution'] += amount
-            self.update_player(name, player['appearance'], player['goals_scored'], player['point'], player['contribution'])
+            self.update_player(
+                name, player['appearance'], player['goals_scored'],
+                player['point'], player['contribution']
+            )
         self.push_to_sheet()
 
     def post_match_result(self, player_names, result, goals_scored):
@@ -108,7 +130,9 @@ class RankingSystem:
                 elif result == "draw":
                     self.add_player(name, 1, goals_scored[name], 1)
             elif name in [player['name'] for player in players]:
-                player = [player for player in players if player['name'] == name][0]
+                player = [
+                    player for player in players if player['name'] == name
+                ][0]
                 if result == "win":
                     player['point'] += 3
                     player['goals_scored'] += goals_scored[name]
@@ -117,21 +141,29 @@ class RankingSystem:
                     player['point'] += 1
                     player['goals_scored'] += goals_scored[name]
                     player['appearance'] += 1
-                self.update_player(name, player['appearance'], player['goals_scored'], player['point'], player['contribution'])
+                self.update_player(
+                    name, player['appearance'], player['goals_scored'],
+                    player['point'], player['contribution']
+                )
         self.push_to_sheet()
 
     def push_to_sheet(self):
         """
         Update Google Sheet with player data.
         """
-        columns = ["Player", "Appearances", "Goals Scored", "Points", "Contribution"]
+        columns = [
+            "Player", "Appearances", "Goals Scored", "Points", "Contribution"
+        ]
         players = self.get_all_players()
-        df = pd.DataFrame([{
-            'name': player['name'],
-            'appearance': player['appearance'],
-            'goals_scored': player['goals_scored'],
-            'point': player['point'],
-            'contribution': player['contribution']} for player in players]).sort_values(by=['point'], ascending=False)
+        df = pd.DataFrame([
+            {
+                'name': player['name'],
+                'appearance': player['appearance'],
+                'goals_scored': player['goals_scored'],
+                'point': player['point'],
+                'contribution': player['contribution']
+            } for player in players
+        ]).sort_values(by=['point'], ascending=False)
         df.columns = columns
         self.sheet.update([df.columns.values.tolist()] + df.values.tolist())
 
@@ -174,25 +206,32 @@ def main():
         choice = input("Enter your choice:\n ")
 
         if choice == "1":
-            player_names = input("Enter player names (comma-separated):\n ").split(",")
+            player_names = input(
+                "Enter player names (comma-separated):\n "
+            ).split(",")
             player_names = [name.strip() for name in player_names]
             result = input("Enter match result (win/draw):\n ")
             goals_scored = {}
             for name in player_names:
                 goals = int(input(f"Enter goals scored by {name}:\n "))
                 goals_scored[name] = goals
-            ranking_system.post_match_result(player_names, result, goals_scored)
+            ranking_system.post_match_result("""player_names,
+            result, goals_scored""")
         elif choice == "2":
             player_name = input("Enter player name:\n ")
             player = ranking_system.get_player(player_name)
             if player:
-                contribution_amount = int(input("Enter contribution amount:\n "))
-                ranking_system.post_contribution(player_name, contribution_amount)
+                contribution_amount = int(input(
+                    "Enter contribution amount:\n "
+                ))
+                ranking_system.post_contribution("""player_name,
+                contribution_amount""")
         elif choice == "3":
             print("Exiting...\n Press 'RUN PROGRAM' to continue updating")
             break
         else:
             print("Invalid choice. Please try again.")
+
 
 if __name__ == "__main__":
     main()
