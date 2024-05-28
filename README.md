@@ -64,8 +64,12 @@ Enter goals scored by sam: 1
 1. Clone the repository.
 2. Create a virtual environment and activate it:
 
-
-
+```bash
+python -m venv venv
+source venv/bin/activate
+Install the required packages:
+bash
+Copy code
 pip install -r requirements.txt
 Place the downloaded creds.json file in the root directory of the project.
 Deployment
@@ -83,7 +87,7 @@ Usage
 Run the application locally:
 
 
-python main.py
+python3 run.py
 On running, you'll be prompted to log in as an admin and presented with options to record match results, record player contributions, or exit the application.
 Admin Login
 Default admin credentials:
@@ -113,5 +117,3 @@ Code Institute for the sample development template and the Love sandwiches devel
 Wikipedia for information about the Battleship game and History.
 w3schools
 Stack Overflow
-
-
