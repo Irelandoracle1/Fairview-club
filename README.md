@@ -334,7 +334,7 @@ if __name__ == "__main__":
     main()
 
 ## Testing 
- I have manually tested this application through this process
+ I have manually tested this application
 - I inputed wrong values. Such as adding empty values, string values and adding the same coordinates twice
 - I passed the code through the PEP8online.com test and confirmed there is no error on my code
 - Tested the App in my local terminal and also my Heroku hosted terminal
@@ -342,21 +342,21 @@ if __name__ == "__main__":
 ### Validator Testing 
 -pep8ci.herokuapp.com
  - Errors originally returnd from pep8ci.herokuapp.com were fixed
- - Final code testing returned with a message: ALL RIGHT
+ - Final code testing returned with a message: 
+ -All clear, no errors found
  
 ### Bugs
    -As at the point of development, I encountered errors in player game class where existing players were added twice  so i fixed it by removing the code which was adding double players
 
 ### Unfixed Bugs
-
-- line too long
+  - None
 
 
 ## Credits 
-- Code Institute for the sample development template and the Love sandwiches development guide and sample
-- Wikipedia for information about the Battleship game and History
-- w3schools
-- Stack overflow
+ - Code Institute for the sample development template and the Love sandwiches development guide and sample
+ - Wikipedia for information about the Battleship game and History
+ - w3schools
+ - Stack overflow
 
 
 
