@@ -215,8 +215,8 @@ def main():
             for name in player_names:
                 goals = int(input(f"Enter goals scored by {name}:\n "))
                 goals_scored[name] = goals
-            ranking_system.post_match_result("""player_names,
-            result, goals_scored""")
+            ranking_system.post_match_result(player_names,
+            result, goals_scored)
         elif choice == "2":
             player_name = input("Enter player name:\n ")
             player = ranking_system.get_player(player_name)
@@ -224,8 +224,8 @@ def main():
                 contribution_amount = int(input(
                     "Enter contribution amount:\n "
                 ))
-                ranking_system.post_contribution("""player_name,
-                contribution_amount""")
+                ranking_system.post_contribution(player_name,
+                contribution_amount)
         elif choice == "3":
             print("Exiting...\n Press 'RUN PROGRAM' to continue updating")
             break
