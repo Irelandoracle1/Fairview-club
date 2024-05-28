@@ -340,8 +340,8 @@ if __name__ == "__main__":
 - Tested the App in my local terminal and also my Heroku hosted terminal
  
 ### Validator Testing 
--PEP8
- - Errors originally returnd from PEP8online.com were all fixed
+-pep8ci.herokuapp.com
+ - Errors originally returnd from pep8ci.herokuapp.com were fixed
  - Final code testing returned with a message: ALL RIGHT
  
 ### Bugs
@@ -349,7 +349,7 @@ if __name__ == "__main__":
 
 ### Unfixed Bugs
 
-- No Bug is left unfixed
+- line too long
 
 
 ## Credits 
