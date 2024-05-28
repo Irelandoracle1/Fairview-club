@@ -69,7 +69,7 @@ python -m venv venv
 source venv/bin/activate
 Install the required packages:
 bash
-
+Copy code
 pip install -r requirements.txt
 Place the downloaded creds.json file in the root directory of the project.
 Deployment
