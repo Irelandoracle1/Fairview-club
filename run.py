@@ -1,6 +1,6 @@
 import gspread
 from google.oauth2.service_account import Credentials
-import pandas as pd 
+import pandas as pd
 import sqlite3 as sq
 import os
 
@@ -18,6 +18,7 @@ CREDS = Credentials.from_service_account_file('creds.json')
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 
+
 class DatabaseConnection:
     def __init__(self, host) -> None:
         self.connection = None
@@ -33,6 +34,7 @@ class DatabaseConnection:
         else:
             self.connection.commit()
             self.connection.close()
+
 
 def create_player_table() -> None:
     with DatabaseConnection(database_path) as connection:
@@ -76,7 +78,6 @@ class RankingSystem:
 
             if not rows:
                 return None
-    
             player = [{
                     'name': row[0], 'appearance': row[1], 'goals_scored': row[2],
                     'point': row[3], 'contribution': row[4]
@@ -107,7 +108,7 @@ class RankingSystem:
                 elif result == "draw":
                     self.add_player(name, 1, goals_scored[name], 1)
             elif name in [player['name'] for player in players]:
-                player = [player for player in players if player['name']==name][0]
+                player = [player for player in players if player['name'] == name][0]
                 if result == "win":
                     player['point'] += 3
                     player['goals_scored'] += goals_scored[name]
@@ -126,13 +127,14 @@ class RankingSystem:
         columns = ["Player", "Appearances", "Goals Scored", "Points", "Contribution"]
         players = self.get_all_players()
         df = pd.DataFrame([{
-            'name': player['name'], 
-            'appearance': player['appearance'], 
-            'goals_scored': player['goals_scored'], 
-            'point': player['point'], 
+            'name': player['name'],
+            'appearance': player['appearance'],
+            'goals_scored': player['goals_scored'],
+            'point': player['point'],
             'contribution': player['contribution']} for player in players]).sort_values(by=['point'], ascending=False)
         df.columns = columns
         self.sheet.update([df.columns.values.tolist()] + df.values.tolist())
+
 
 def admin_login():
     """
