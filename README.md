@@ -64,12 +64,8 @@ Enter goals scored by sam: 1
 1. Clone the repository.
 2. Create a virtual environment and activate it:
 
-```bash
-python -m venv venv
-source venv/bin/activate
-Install the required packages:
-bash
-Copy code
+
+
 pip install -r requirements.txt
 Place the downloaded creds.json file in the root directory of the project.
 Deployment
