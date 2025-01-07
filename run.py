@@ -13,10 +13,14 @@ SCOPE = [
     "https://www.googleapis.com/auth/drive"
 ]
 
-# Load Google Sheets credentials
-CREDS = Credentials.from_service_account_file('creds.json')
-SCOPED_CREDS = CREDS.with_scopes(SCOPE)
-GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
+# Load Google Sheets credentials with error handling
+try:
+    CREDS = Credentials.from_service_account_file('creds.json')
+    SCOPED_CREDS = CREDS.with_scopes(SCOPE)
+    GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
+except Exception as e:
+    print(f"Error loading Google Sheets credentials: {e}")
+    exit(1)
 
 
 class DatabaseConnection:
@@ -25,7 +29,11 @@ class DatabaseConnection:
         self.host = host
 
     def __enter__(self) -> sq.Connection:
-        self.connection = sq.connect(self.host)
+        try:
+            self.connection = sq.connect(self.host)
+        except sq.Error as e:
+            print(f"Error connecting to database: {e}")
+            exit(1)
         return self.connection
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -37,13 +45,16 @@ class DatabaseConnection:
 
 
 def create_player_table() -> None:
-    with DatabaseConnection(database_path) as connection:
-        cursor = connection.cursor()
-        cursor.execute(
-            'CREATE TABLE IF NOT EXISTS players '
-            '(name text primary key, appearance integer, '
-            'goals_scored integer, point integer, contribution integer)'
-        )
+    try:
+        with DatabaseConnection(database_path) as connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                'CREATE TABLE IF NOT EXISTS players '
+                '(name text primary key, appearance integer, '
+                'goals_scored integer, point integer, contribution integer)'
+            )
+    except sq.Error as e:
+        print(f"Error creating player table: {e}")
 
 
 class RankingSystem:
@@ -52,56 +63,74 @@ class RankingSystem:
         self.sheet = self.get_player_sheet()
 
     def get_player_sheet(self):
-        return GSPREAD_CLIENT.open(self.player_sheet_name).worksheet('Players')
+        try:
+            return GSPREAD_CLIENT.open(self.player_sheet_name).worksheet('Players')
+        except gspread.SpreadsheetNotFound as e:
+            print(f"Error: Google Sheet '{self.player_sheet_name}' not found. {e}")
+            exit(1)
 
     def add_player(self, name, appearance, goals_scored, point):
-        with DatabaseConnection(database_path) as connection:
-            cursor = connection.cursor()
-            cursor.execute(
-                'INSERT INTO players VALUES (?, ?, ?, ?, 0)',
-                (name, appearance, goals_scored, point)
-            )
+        try:
+            with DatabaseConnection(database_path) as connection:
+                cursor = connection.cursor()
+                cursor.execute(
+                    'INSERT INTO players VALUES (?, ?, ?, ?, 0)',
+                    (name, appearance, goals_scored, point)
+                )
+        except sq.Error as e:
+            print(f"Error inserting player into database: {e}")
 
     def update_player(self, name, appearance, goals_scored, point,
                       contribution):
-        with DatabaseConnection(database_path) as connection:
-            cursor = connection.cursor()
-            cursor.execute(
-                'UPDATE players SET appearance=?, goals_scored=?, point=?, '
-                'contribution=? WHERE name=?',
-                (appearance, goals_scored, point, contribution, name)
-            )
+        try:
+            with DatabaseConnection(database_path) as connection:
+                cursor = connection.cursor()
+                cursor.execute(
+                    'UPDATE players SET appearance=?, goals_scored=?, point=?, '
+                    'contribution=? WHERE name=?',
+                    (appearance, goals_scored, point, contribution, name)
+                )
+        except sq.Error as e:
+            print(f"Error updating player data: {e}")
 
     def get_all_players(self):
-        with DatabaseConnection(database_path) as connection:
-            cursor = connection.cursor()
-            cursor.execute('SELECT * FROM players')
-            players = [
-                {
-                    'name': row[0], 'appearance': row[1],
-                    'goals_scored': row[2],
-                    'point': row[3], 'contribution': row[4]
-                } for row in cursor.fetchall()
-            ]
-        return players
+        try:
+            with DatabaseConnection(database_path) as connection:
+                cursor = connection.cursor()
+                cursor.execute('SELECT * FROM players')
+                players = [
+                    {
+                        'name': row[0], 'appearance': row[1],
+                        'goals_scored': row[2],
+                        'point': row[3], 'contribution': row[4]
+                    } for row in cursor.fetchall()
+                ]
+            return players
+        except sq.Error as e:
+            print(f"Error fetching all players: {e}")
+            return []
 
     def get_player(self, name):
-        with DatabaseConnection(database_path) as connection:
-            cursor = connection.cursor()
-            cursor.execute('SELECT * FROM players WHERE name=?', (name,))
-            rows = cursor.fetchall()
+        try:
+            with DatabaseConnection(database_path) as connection:
+                cursor = connection.cursor()
+                cursor.execute('SELECT * FROM players WHERE name=?', (name,))
+                rows = cursor.fetchall()
 
-            if not rows:
-                return None
+                if not rows:
+                    return None
 
-            player = [
-                {
-                    'name': row[0], 'appearance': row[1],
-                    'goals_scored': row[2],
-                    'point': row[3], 'contribution': row[4]
-                } for row in rows
-            ][0]
-            return player
+                player = [
+                    {
+                        'name': row[0], 'appearance': row[1],
+                        'goals_scored': row[2],
+                        'point': row[3], 'contribution': row[4]
+                    } for row in rows
+                ][0]
+                return player
+        except sq.Error as e:
+            print(f"Error fetching player: {e}")
+            return None
 
     def post_contribution(self, name, amount):
         player = self.get_player(name)
@@ -155,19 +184,20 @@ class RankingSystem:
             "Player", "Appearances", "Goals Scored", "Points", "Contribution"
         ]
         players = self.get_all_players()
-        df = pd.DataFrame([
-            {
-                'name': player['name'],
-                'appearance': player['appearance'],
-                'goals_scored': player['goals_scored'],
-                'point': player['point'],
-                'contribution': player['contribution']
-            } for player in players
-        ]).sort_values(by=['point'], ascending=False)
+        df = pd.DataFrame([{
+            'name': player['name'],
+            'appearance': player['appearance'],
+            'goals_scored': player['goals_scored'],
+            'point': player['point'],
+            'contribution': player['contribution']
+        } for player in players]).sort_values(by=['point'], ascending=False)
         df.columns = columns
-        self.sheet.update([df.columns.values.tolist()] + df.values.tolist())
+        try:
+            self.sheet.update([df.columns.values.tolist()] + df.values.tolist())
+        except gspread.GSpreadException as e:
+            print(f"Error updating Google Sheet: {e}")
 
-
+# Error handling for admin login
 def admin_login():
     """
     Checks admin credentials.
@@ -182,9 +212,10 @@ def admin_login():
     if username == admin_username and password == admin_password:
         return True
     else:
+        print("Invalid credentials. Access denied.")
         return False
 
-
+# Input validation and error handling in main
 def main():
     """
     Main function to run the application.
@@ -194,7 +225,6 @@ def main():
     ranking_system = RankingSystem(player_sheet_name)
 
     if not admin_login():
-        print("Invalid credentials. Access denied.")
         return
 
     while True:
@@ -213,25 +243,28 @@ def main():
             result = input("Enter match result (win/draw):\n ")
             goals_scored = {}
             for name in player_names:
-                goals = int(input(f"Enter goals scored by {name}:\n "))
-                goals_scored[name] = goals
-            ranking_system.post_match_result(player_names,
-            result, goals_scored)
+                try:
+                    goals = int(input(f"Enter goals scored by {name}:\n "))
+                    goals_scored[name] = goals
+                except ValueError:
+                    print("Invalid input for goals. Please enter a number.")
+                    continue
+            ranking_system.post_match_result(player_names, result, goals_scored)
+
         elif choice == "2":
             player_name = input("Enter player name:\n ")
-            player = ranking_system.get_player(player_name)
-            if player:
-                contribution_amount = int(input(
-                    "Enter contribution amount:\n "
-                ))
-                ranking_system.post_contribution(player_name,
-                contribution_amount)
+            try:
+                contribution_amount = float(input("Enter contribution amount:\n "))
+                ranking_system.post_contribution(player_name, contribution_amount)
+            except ValueError:
+                print("Invalid input. Contribution amount should be a number.")
+                continue
+
         elif choice == "3":
-            print("Exiting...\n Press 'RUN PROGRAM' to continue updating")
+            print("Exiting the application.")
             break
         else:
-            print("Invalid choice. Please try again.")
-
+            print("Invalid choice. Please select a valid option.")
 
 if __name__ == "__main__":
     main()
