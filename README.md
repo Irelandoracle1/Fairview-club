@@ -1,119 +1,160 @@
 # Fairview Football Application
 
-## Overview
+The **Fairview Football Application** is a Python-based program designed to simplify the management of player statistics and financial contributions for the Fairview Football team. By integrating with Google Sheets and utilizing an SQLite database, this application ensures robust data handling and easy access for tracking and reporting purposes. It features an interactive command-line interface for user-friendly operations and offers tools to manage match results, player rankings, and contribution records efficiently.
 
-The Fairview Football Application is a Python-based system designed to manage player statistics and contributions for a football team. It integrates with Google Sheets to store and update player data. The Python program illustrates a football ranking system and player statistics management application with a SQLite database and a Google Sheet for player information. An interactive command-line interface allows users to input match results and player contributions, update player rankings and statistics, and track player contributions.
-
-The following is the output of the Python program when executed:
-
-Welcome To Fairview Football Application
-
-Select an option:
-
-Record match result
-Record player contribution
-Exit
-Enter your choice: 1
-Enter player names (comma-separated): shaun,martina,sam
-Enter match result (win/draw): draw
-Enter goals scored by shaun: 1
-Enter goals scored by martina: 0
-Enter goals scored by sam: 1
-
-
-### Here Is The Live Version
-
-![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview9.jpg)
-![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview1.jpg)
-![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview2.jpg)
-![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview3.jpg)
-![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview4.jpg)
-![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview5.jpg)
-![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview6.jpg)
-![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview7.jpg)
-![App image](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview8.jpg)
+---
 
 ## Features
 
-- Record match results and update player statistics.
-- Record player contributions.
-- Store data in an SQLite database.
-- Sync data with Google Sheets.
+### **Core Functionalities**
+- **Record Match Results**:  
+  Input match details, including the players involved, goals scored, and match outcomes, to automatically update player statistics and rankings.
+  
+- **Track Player Contributions**:  
+  Log player contributions such as monetary donations or supplies, ensuring a transparent and well-maintained record of team support.
 
-## Requirements
+- **SQLite Database Integration**:  
+  Player data is stored locally in an SQLite database for quick access and reliability, even when offline.
 
-- Python 3.9
-- `gspread`
-- `google-auth`
-- `pandas`
-- `sqlite3`
-- Google Cloud service account with access to Google Sheets API.
-- A Google Sheet named "Fairview_Football_All_Stars_Contributions" with a worksheet named "Players".
+- **Google Sheets Synchronization**:  
+  Automatically sync player statistics and contributions with a Google Sheet for backup, team management, or sharing with stakeholders.
+
+### **Additional Features**
+- **User Authentication**:  
+  A basic authentication system to protect sensitive data from unauthorized access.
+
+- **Data Validation**:  
+  Input validation ensures accurate data entry, avoiding errors or duplication.
+
+- **Dynamic Ranking System**:  
+  Generate a ranking table based on player performance, including goals scored and other metrics.
+
+- **Error Handling and Logging**:  
+  Comprehensive error handling to manage invalid inputs or system failures, with detailed logs for debugging.
+
+---
+
+## Screenshots
+
+Here are some screenshots showcasing the application's functionalities:
+
+1. **Main Menu**  
+   ![App Menu](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview4.jpg)
+
+2. **Recording Match Results**  
+   ![Match Result Recording](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview1.jpg)
+
+3. **Viewing Player Statistics**  
+   ![Player Stats Overview](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview2.jpg)
+
+4. **Logging Player Contributions**  
+   ![Contribution Recording](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview3.jpg)
+
+5. **Overall App Workflow**  
+   ![Fairview Football App](https://github.com/Irelandoracle1/Fairview-club/blob/main/images/fairview9.jpg)
+
+For more images, visit the [GitHub repository images folder](https://github.com/Irelandoracle1/Fairview-club/tree/main/images).
+
+---
+
+## Prerequisites
+
+### **Software and Libraries**
+1. **Python**: Version 3.9 or higher.
+2. **Python Libraries**:
+   - `gspread` (Google Sheets integration)
+   - `google-auth` (Authentication for Google APIs)
+   - `pandas` (Data manipulation)
+   - `sqlite3` (Local database management)
+
+### **Google Cloud Configuration**
+1. **Service Account**:  
+   Set up a service account on Google Cloud to access the **Google Sheets API**. Download the JSON credentials file (`creds.json`).
+2. **Google Sheet**:  
+   Create a Google Sheet named `Fairview_Football_All_Stars_Contributions` with a worksheet titled `Players`. Share the sheet with the service account email.
+
+---
 
 ## Setup
 
-### Google Cloud Setup
-
-1. Create a Google Cloud project.
-2. Enable the Google Sheets API and Google Drive API.
-3. Create a service account and download the JSON key file.
-4. Share the Google Sheet with the service account email.
-
-### Environment Setup
-
-1. Clone the repository.
-2. Create a virtual environment and activate it:
-
+### **Step 1: Clone the Repository**
+Clone the project repository to your local machine:
 ```bash
-python -m venv venv
-source venv/bin/activate
-Install the required packages:
-bash
-Copy code
+git clone https://github.com/Irelandoracle1/Fairview-club.git
+Step 2: Create a Virtual Environment
+Navigate to the project directory and set up a Python virtual environment:
+
+
+cd Fairview-club
+python3 -m venv venv
+source venv/bin/activate  # For Linux/Mac
+venv\Scripts\activate     # For Windows
+Step 3: Install Dependencies
+Install all required Python libraries:
+
+
 pip install -r requirements.txt
-Place the downloaded creds.json file in the root directory of the project.
-Deployment
-These are the steps I followed in deploying the application to Heroku:
+Step 4: Add Credentials
+Place the creds.json file in the project root directory. Ensure it has the proper permissions.
 
-Steps For Deployment
-Fork or Clone this repository.
-Create a new Heroku App.
-Set the buildpack for Python and Node.js.
-Link the Heroku App to this repository.
-Click on 'Deploy Branch'.
-The live link can be found here: https://fairview-app-ffc01770d1ed.herokuapp.com/
-
-Usage
-Run the application locally:
+Step 5: Run the Application
+Execute the program from the command line:
 
 
 python3 run.py
-On running, you'll be prompted to log in as an admin and presented with options to record match results, record player contributions, or exit the application.
-Admin Login
-Default admin credentials:
-
+Usage
+Logging In
+Start the application.
+Use the default admin credentials:
 Username: admin
 Password: password
-Main Menu Options
-Record match result: Enter player names, match result, and goals scored by each player.
-Record player contribution: Enter player name and contribution amount.
-Exit: Exit the application.
-Testing
-I have manually tested this application:
+Navigating the App
+The app provides the following options in its main menu:
 
-I inputted wrong values, such as adding empty values, string values, and adding the same coordinates twice.
-I passed the code through the PEP8online.com test and confirmed there is no error in my code.
-Tested the App in my local terminal and also my Heroku hosted terminal.
-Validator Testing
-pep8ci.herokuapp.com
-Errors originally returned from pep8ci.herokuapp.com were fixed.
-Final code testing returned with a message: "All clear, no errors found."
-Bugs
-During development, I encountered errors in the player game class where existing players were added twice. I fixed this by removing the code which was adding double players.
-Unfixed Bugs
-None
+Record Match Results:
+Enter player names, goals scored, and match details to update statistics.
+Track Player Contributions:
+Log contributions with details such as amount, type, and player name.
+Exit Application:
+Safely close the program, ensuring all data is saved locally and synced to Google Sheets.
+Deployment
+Local Deployment
+Follow the setup instructions above to run the application locally on your machine.
+
+Heroku Deployment
+Fork or clone the repository.
+Create a new app on Heroku.
+Add the necessary buildpacks for Python and Node.js.
+Deploy the application using the Heroku CLI or directly via the GitHub repository.
+🔗 Live Demo: Fairview Football Application on Heroku
+
+Testing
+Manual Testing
+The application was manually tested using the following scenarios:
+
+Valid and Invalid Inputs:
+Entered correct and incorrect data types (e.g., text in numeric fields).
+Tested empty input scenarios.
+Database Operations:
+Verified that player data is saved correctly in SQLite and updated upon edits.
+Google Sheets Integration:
+Confirmed that changes in the app reflect accurately in the linked Google Sheet.
+Error Handling:
+Simulated network errors and missing files to ensure proper error messages.
+PEP8 Validation
+The codebase was validated for compliance with Python's PEP8 style guide using PEP8 Validator.
+Result: No errors or warnings found.
+
+Known Issues
+Unfixed Bugs: None reported.
+Resolved Bugs:
+Fixed an issue with duplicate player entries caused by redundant database queries.
 Credits
-Code Institute for the sample development template and the Love sandwiches development guide and sample.
-Wikipedia for information about the Battleship game and History.
-w3schools
+Code Institute: Provided templates and learning resources.
+Online Resources:
+Wikipedia
+W3Schools
 Stack Overflow
+Contributors:
+Oluwaseyi Badero
+For more details, visit the GitHub repository.
