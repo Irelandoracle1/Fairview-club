@@ -205,14 +205,14 @@ def admin_login():
     username = input("Enter admin username:\n ")
     password = input("Enter admin password:\n ")
 
-    # Add your desired admin username and password here
+    
     admin_username = "admin"
     admin_password = "password"
 
     if username == admin_username and password == admin_password:
         return True
     else:
-        print("Invalid credentials. Access denied.")
+        print("Invalid credentials. Access denied. Please click on Run Program again to re-enter details.")
         return False
 
 # Input validation and error handling in main
